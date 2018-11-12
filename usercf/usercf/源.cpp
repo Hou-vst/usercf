@@ -4,13 +4,14 @@
 #include<string>
 #include<set>
 #include<math.h>
+#include<algorithm>
 // 靠靠靠靠靠靠
 
 using namespace std;
-string A[3]= {"a","b","d"};
-string B[2] = { "a","c" };
-string C[2] = { "b","e" };
-string D[3] = { "d","c","e" };
+string A[]= {"a","b","d"};
+string B[] = { "a","c" };
+string C[] = { "b","e" };
+string D[] = { "d","c","e" };
 
 //生成 用户-物品的对应表
  void Create_UserToItem_Table(map<string, set<string>>& map)
@@ -156,6 +157,45 @@ string D[3] = { "d","c","e" };
 	 }
  }
 
+ // 指定一个用户和物品，倒排其他使用该物品的用户和该用户的相似度
+ vector<float> SortSimilarUser(const map<string, map<string, float>>& table,const string& user_name,const string& item_name, map<string, set<string>>& item_to_user)
+ {
+	 vector<float> v;
+
+	 if (table.find(user_name) == table.end())
+	 {
+		 return v;
+	 }
+	 const map<string, float>& user_map = table.find(user_name)->second;
+	 map<string, float>::const_iterator iter = user_map.begin();
+	 const set<string>& user_set = item_to_user[item_name];
+	 for (; iter != user_map.end(); iter++)
+	 {
+		 const string& user_name1 = iter->first;
+
+		 // 判断user_name1用户有没有使用过该商品
+		 if (user_set.find(user_name1) != user_set.end())
+		 {
+			 v.push_back(iter->second);
+		 }
+	 }
+
+	 sort(v.begin(),v.end(),greater<float>());
+	 return v;
+ }
+ 
+ float Calculate(const vector<float>& result,int k)
+ {
+	 float t = 0;
+	 float r = 1;
+	 for (int i = 0; i < result.size() && i < k; i++)
+	 {
+		 t += result[i]*r;
+	 }
+
+	 return t;
+ }
+
  int main()
  {
 	 // 生成 用户-物品的对应表
@@ -176,5 +216,14 @@ string D[3] = { "d","c","e" };
 
 	 // 输出结果
 	 PrintResult(result);
+
+	
+	 string user = "B";
+	 string item = "d";
+	 int k = 3;
+	 cout << "计算用户user :"<< user.c_str()<<"对物品item :"<< item.c_str()<<"的感兴趣程度,k值为"<<k << endl;
+	 vector<float>&& v = SortSimilarUser(result,user,item, item_to_user);
+	 cout << Calculate(v, k) << endl;
+
 	 return 0;
  }
