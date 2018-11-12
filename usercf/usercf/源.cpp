@@ -166,6 +166,13 @@ string D[] = { "d","c","e" };
 	 {
 		 return v;
 	 }
+
+	 if (item_to_user[item_name].find(user_name) != item_to_user[item_name].end())
+	 {
+		 v.push_back(1);
+		 return v;
+	 }
+
 	 const map<string, float>& user_map = table.find(user_name)->second;
 	 map<string, float>::const_iterator iter = user_map.begin();
 	 const set<string>& user_set = item_to_user[item_name];
@@ -218,8 +225,8 @@ string D[] = { "d","c","e" };
 	 PrintResult(result);
 
 	
-	 string user = "B";
-	 string item = "d";
+	 string user = "A";
+	 string item = "c";
 	 int k = 3;
 	 cout << "计算用户user :"<< user.c_str()<<"对物品item :"<< item.c_str()<<"的感兴趣程度,k值为"<<k << endl;
 	 vector<float>&& v = SortSimilarUser(result,user,item, item_to_user);
